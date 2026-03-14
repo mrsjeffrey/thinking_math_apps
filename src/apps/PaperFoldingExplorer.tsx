@@ -93,11 +93,11 @@ export default function PaperFoldingExplorer() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <header className="border-b border-black/10 pb-6">
-          <h1 className="text-3xl font-light tracking-tight text-gray-900 italic serif">
-            Paper Folding Explorer
-          </h1>
-          <p className="text-sm text-gray-500 font-mono mt-2 uppercase tracking-widest">
-            Simulation: Thinking Mathematically (Ch. 1)
+        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+          Paper Folding Explorer
+        </h1>
+          <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Sourced from **Thinking Mathematically** (Burton et al.)
           </p>
         </header>
 
