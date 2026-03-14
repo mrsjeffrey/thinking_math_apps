@@ -93,7 +93,8 @@ export default function PaperFoldingExplorer() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <header className="border-b border-black/10 pb-6">
-        <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-4xl tracking-tight text-gray-900"
+            style={{ fontFamily: "Playfair Display, serif", fontWeight: 500 }}>
           Paper Folding Explorer
         </h1>
           <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">
