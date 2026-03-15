@@ -317,7 +317,9 @@ export default function CirclesAndSpotsExplorer() {
                 </div>
               </div>
             </SectionCard>
+          </div>
 
+          <div className="space-y-6 lg:col-span-5">
             <SectionCard>
               <SectionHeader
                 icon={<Calculator size={16} className="text-blue-500" />}
@@ -342,111 +344,54 @@ export default function CirclesAndSpotsExplorer() {
                     </button>
                   </div>
                 </div>
-
-                <AnimatePresence mode="wait">
-                  {feedback && (
-                    <motion.div
-                      key={feedback.text}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      className={`rounded-2xl px-6 py-6 ${
-                        feedback.type === 'warning'
-                          ? 'border border-rose-100 bg-rose-50'
-                          : feedback.type === 'success'
-                            ? 'border border-emerald-100 bg-emerald-50'
-                            : 'border border-slate-100 bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        {feedback.type === 'warning' ? (
-                          <AlertTriangle size={20} className="mt-0.5 shrink-0 text-rose-500" />
-                        ) : feedback.type === 'success' ? (
-                          <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-emerald-500" />
-                        ) : (
-                          <Lightbulb size={20} className="mt-0.5 shrink-0 text-slate-500" />
-                        )}
-
-                        <div>
-                          <div
-                            className={`font-semibold ${
-                              feedback.type === 'warning'
-                                ? 'text-rose-800'
-                                : feedback.type === 'success'
-                                  ? 'text-emerald-800'
-                                  : 'text-slate-800'
-                            }`}
-                          >
-                            {feedback.type === 'warning'
-                              ? 'Pattern Warning'
-                              : feedback.type === 'success'
-                                ? 'Strong Direction'
-                                : 'Keep Testing'}
-                          </div>
-                          <p
-                            className={`mt-1 text-sm leading-7 ${
-                              feedback.type === 'warning'
-                                ? 'text-rose-700'
-                                : feedback.type === 'success'
-                                  ? 'text-emerald-700'
-                                  : 'text-slate-700'
-                            }`}
-                          >
-                            {feedback.text}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </SectionCard>
-          </div>
 
-          <div className="space-y-6 lg:col-span-5">
             <SectionCard>
               <SectionHeader
                 icon={<History size={16} className="text-blue-500" />}
                 title="Investigation Log"
               />
               <div className="px-6 py-6">
-                <div className="overflow-hidden rounded-2xl border border-black/5">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 text-gray-700">
-                      <tr>
-                        <th className="px-4 py-3 font-semibold">N</th>
-                        <th className="px-4 py-3 font-semibold">Maximum Regions</th>
-                        <th className="px-4 py-3 font-semibold">Pattern Note</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-black/5 bg-white">
-                      {Array.from({ length: Math.max(10, n) }, (_, i) => i + 1).map((rowN) => {
-                        const rowR = calculateMaxRegions(rowN);
-                        const isVisible = rowN <= n;
-                        const isBreak = rowN === 6 && n >= 6;
+                <div className="max-h-[420px] overflow-hidden rounded-2xl border border-black/5">
+                  <div className="max-h-[420px] overflow-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="sticky top-0 bg-gray-50 text-gray-700">
+                        <tr>
+                          <th className="px-4 py-3 font-semibold">N</th>
+                          <th className="px-4 py-3 font-semibold">Maximum Regions</th>
+                          <th className="px-4 py-3 font-semibold">Pattern Note</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-black/5 bg-white">
+                        {Array.from({ length: Math.max(10, n) }, (_, i) => i + 1).map((rowN) => {
+                          const rowR = calculateMaxRegions(rowN);
+                          const isVisible = rowN <= n;
+                          const isBreak = rowN === 6 && n >= 6;
 
-                        return (
-                          <tr key={rowN} className={rowN === n ? 'bg-gray-50' : ''}>
-                            <td className="px-4 py-3 font-medium text-gray-900">{rowN}</td>
-                            <td className="px-4 py-3 text-gray-700">{isVisible ? rowR : '—'}</td>
-                            <td
-                              className={`px-4 py-3 ${
-                                isBreak ? 'font-medium text-rose-600' : 'text-gray-500'
-                              }`}
-                            >
-                              {!isVisible
-                                ? '—'
-                                : rowN < 6
-                                  ? 'Looks like doubling'
-                                  : rowN === 6
-                                    ? 'Doubling breaks here'
-                                    : 'Needs deeper rule'}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                          return (
+                            <tr key={rowN} className={rowN === n ? 'bg-gray-50' : ''}>
+                              <td className="px-4 py-3 font-medium text-gray-900">{rowN}</td>
+                              <td className="px-4 py-3 text-gray-700">{isVisible ? rowR : '—'}</td>
+                              <td
+                                className={`px-4 py-3 ${
+                                  isBreak ? 'font-medium text-rose-600' : 'text-gray-500'
+                                }`}
+                              >
+                                {!isVisible
+                                  ? '—'
+                                  : rowN < 6
+                                    ? 'Looks like doubling'
+                                    : rowN === 6
+                                      ? 'Doubling breaks here'
+                                      : 'Needs deeper rule'}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 <div className="mt-5">
@@ -474,6 +419,7 @@ export default function CirclesAndSpotsExplorer() {
                     })}
                   </div>
                 </div>
+
               </div>
             </SectionCard>
           </div>
@@ -530,7 +476,7 @@ export default function CirclesAndSpotsExplorer() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+</div>
     </div>
   );
 }
