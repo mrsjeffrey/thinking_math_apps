@@ -3,38 +3,35 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
-import { 
-  Calculator, 
-  Percent, 
-  DollarSign, 
-  RefreshCw, 
-  Info, 
-  Lightbulb, 
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  BookOpen,
-  BarChart3
-} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { BarChart3, Calculator, DollarSign, Info, Percent, RefreshCw } from 'lucide-react';
+import { AppHeader } from '../components/AppHeader';
+import { Button } from '../components/Button';
+import { SectionCard } from '../components/SectionCard';
+import { SectionHeader } from '../components/SectionHeader';
+import { TogglePill } from '../components/TogglePill';
+import { ChartWrapper } from '../components/warehouse/ChartWrapper';
+import { InsightCard } from '../components/warehouse/InsightCard';
+import { ParameterSlider } from '../components/warehouse/ParameterSlider';
+import { ResultPathCard } from '../components/warehouse/ResultPathCard';
+import { StackedBar } from '../components/warehouse/StackedBar';
+import { appStyles } from '../styles/appStyles';
+import { cn } from '../lib/cn';
 
 export default function WarehouseExplorer() {
-  const [price, setPrice] = useState<number>(100);
-  const [discountPercent, setDiscountPercent] = useState<number>(20);
-  const [taxPercent, setTaxPercent] = useState<number>(15);
-  const [showInsight, setShowInsight] = useState<boolean>(false);
-  const [showVisual, setShowVisual] = useState<boolean>(false);
+  const [price, setPrice] = useState(100);
+  const [discountPercent, setDiscountPercent] = useState(20);
+  const [taxPercent, setTaxPercent] = useState(15);
+  const [showInsight, setShowInsight] = useState(false);
+  const [showVisual, setShowVisual] = useState(false);
 
-  // Multipliers
   const discountMultiplier = useMemo(() => (100 - discountPercent) / 100, [discountPercent]);
   const taxMultiplier = useMemo(() => (100 + taxPercent) / 100, [taxPercent]);
 
-  // Path A: Discount then Tax
   const pathA_step1 = useMemo(() => price * discountMultiplier, [price, discountMultiplier]);
   const pathA_final = useMemo(() => pathA_step1 * taxMultiplier, [pathA_step1, taxMultiplier]);
 
-  // Path B: Tax then Discount
   const pathB_step1 = useMemo(() => price * taxMultiplier, [price, taxMultiplier]);
   const pathB_final = useMemo(() => pathB_step1 * discountMultiplier, [pathB_step1, discountMultiplier]);
 
@@ -44,283 +41,197 @@ export default function WarehouseExplorer() {
     setTaxPercent(Math.floor(Math.random() * 20) + 5);
   };
 
-  const formatCurrency = (val: number) => 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-
-  const StackedBar = ({ segments, label }: { segments: { height: number, color: string, tooltip?: string }[], label: string }) => (
-    <div className="flex flex-col items-center gap-2 w-16 h-full justify-end z-10">
-      <div className="relative w-full flex-1 flex flex-col justify-end">
-        {segments.map((seg, i) => (
-          <motion.div 
-            key={i}
-            initial={{ height: 0 }}
-            animate={{ height: `${seg.height}%` }}
-            className={`w-full ${seg.color} ${i === segments.length - 1 ? 'rounded-t-sm' : ''} relative group transition-colors`}
-          >
-            {seg.tooltip && (
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[8px] font-bold font-mono bg-brand-primary text-white px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                {seg.tooltip}
-              </div>
-            )}
-          </motion.div>
-        ))}
-      </div>
-      <span className="text-[8px] font-bold text-brand-secondary uppercase tracking-tighter shrink-0 text-center leading-tight h-8 flex items-center">{label}</span>
-    </div>
-  );
-
-  const ChartWrapper = ({ children, title }: { children: React.ReactNode, title: string }) => (
-    <div className="space-y-4 flex flex-col">
-      <p className="text-[10px] font-bold uppercase text-brand-secondary text-center">{title}</p>
-      <div className="relative flex items-end h-[450px] bg-brand-bg/50 rounded border border-brand-border p-4 pl-20 pr-6 overflow-hidden">
-        {/* Y-Axis & Horizontal Gridlines */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pt-4 pb-12 pl-20 pr-6">
-          {[1.5, 1.25, 1, 0.75, 0.5, 0.25, 0].map((factor) => (
-            <div key={factor} className="relative w-full border-b border-brand-border/40 flex items-center h-0">
-              <span className="absolute -left-16 text-[9px] font-bold text-brand-secondary/70">{formatCurrency(price * factor)}</span>
-            </div>
-          ))}
-        </div>
-        {/* Vertical Gridlines */}
-        <div className="absolute inset-0 flex justify-around pointer-events-none pt-4 pb-12 pl-20 pr-6">
-          {[0, 1, 2, 3].map(i => (
-            <div key={i} className="h-full border-l border-brand-border/30"></div>
-          ))}
-        </div>
-        <div className="flex items-end justify-around w-full h-full">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
+  const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-primary font-sans selection:bg-brand-blue/20">
-      {/* Header */}
-      <header className="py-12 px-6 max-w-5xl mx-auto">
-        <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">Warehouse Explorer</h1>
+    <div className={appStyles.page}>
+      <div className={cn(appStyles.container, 'max-w-5xl')}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <AppHeader
+            title="Warehouse Explorer"
+            subtitle={
+              <>
+                Sourced from <strong>Thinking Mathematically</strong> (Burton et al.)
+              </>
+            }
+            titleClassName="text-4xl tracking-tight text-gray-900"
+            titleStyle={{ fontFamily: 'Playfair Display, serif', fontWeight: 500 }}
+          />
+          <Button onClick={randomize} className="mt-1">
+            <RefreshCw size={16} /> Randomize
+          </Button>
+        </div>
+
+        <SectionCard className="overflow-hidden">
+          <SectionHeader icon={<Info size={16} className="text-blue-500" />} title="The Problem" />
+          <div className={appStyles.cardSection}>
+            <blockquote className="border-l-4 border-blue-100 pl-4 py-1 italic leading-relaxed text-gray-700">
+              "In a warehouse you obtain {discountPercent}% discount but you must pay a {taxPercent}% sales tax. Which
+              would you prefer to have calculated first: discount or tax?"
+            </blockquote>
           </div>
-          <div className="flex gap-4 text-sm font-medium">
-            <button 
-              onClick={randomize}
-              className="hover:text-brand-blue transition-colors flex items-center gap-1"
-            >
-              <RefreshCw size={14} />
-              Random
-            </button>
-          </div>
-        </nav>
-        <p className="mt-2 text-sm text-brand-secondary">Mathematical Thinking: Specializing & Generalizing</p>
-      </header>
+        </SectionCard>
 
-      <main className="max-w-5xl mx-auto px-6 pb-24 space-y-12">
-        {/* The Question */}
-        <section className="prose prose-sm max-w-none border-l-4 border-brand-blue pl-6 py-2 bg-brand-blue/5 rounded-r-lg">
-          <p className="text-lg leading-relaxed italic text-brand-primary/90">
-            "In a warehouse you obtain {discountPercent}% discount but you must pay a {taxPercent}% sales tax. Which would you prefer to have calculated first: discount or tax?"
-          </p>
-          <footer className="mt-2 text-xs text-brand-secondary uppercase tracking-widest">— Thinking Mathematically</footer>
-        </section>
-
-        {/* Controls Section */}
-        <section className="bg-brand-card border border-brand-border p-8 rounded-lg shadow-sm space-y-8">
-          <header className="flex items-center justify-between border-b border-brand-border pb-4">
-            <h2 className="text-sm font-bold uppercase tracking-widest flex items-center gap-2 text-black">
-              <Percent size={16} />
-              Parameters
-            </h2>
-          </header>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Price Input */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-brand-blue uppercase tracking-widest">Price</label>
-                <span className="text-sm font-mono font-bold text-brand-blue">{formatCurrency(price)}</span>
-              </div>
-              <input 
-                type="range" 
-                min="10" 
-                max="1000" 
-                step="10"
-                value={price}
-                onChange={(e) => setPrice(Number(e.target.value))}
-                className="w-full h-1.5 bg-brand-bg rounded-lg appearance-none cursor-pointer accent-brand-blue"
-              />
-            </div>
-
-            {/* Discount Input */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-brand-green uppercase tracking-widest">Discount</label>
-                <span className="text-sm font-mono font-bold text-brand-green">{discountPercent}%</span>
-              </div>
-              <input 
-                type="range" 
-                min="0" 
-                max="90" 
-                value={discountPercent}
-                onChange={(e) => setDiscountPercent(Number(e.target.value))}
-                className="w-full h-1.5 bg-brand-bg rounded-lg appearance-none cursor-pointer accent-brand-green"
-              />
-            </div>
-
-            {/* Tax Input */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-brand-purple uppercase tracking-widest">Tax</label>
-                <span className="text-sm font-mono font-bold text-brand-purple">{taxPercent}%</span>
-              </div>
-              <input 
-                type="range" 
-                min="0" 
-                max="50" 
-                value={taxPercent}
-                onChange={(e) => setTaxPercent(Number(e.target.value))}
-                className="w-full h-1.5 bg-brand-bg rounded-lg appearance-none cursor-pointer accent-brand-purple"
-              />
+        <SectionCard className="space-y-8 p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className={appStyles.sectionLabel}>Parameters</h2>
+            <div className="flex flex-wrap gap-4 text-xs font-mono text-gray-400">
+              <span>Price: {formatCurrency(price)}</span>
+              <span>Discount: {discountPercent}%</span>
+              <span>Tax: {taxPercent}%</span>
             </div>
           </div>
 
-          <div className="pt-4">
-            {/* Insight button removed from here */}
-          </div>
-        </section>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <ParameterSlider
+              label="Price"
+              valueLabel={formatCurrency(price)}
+              value={price}
+              min={10}
+              max={1000}
+              step={10}
+              onChange={setPrice}
+              icon={<DollarSign size={16} className="text-gray-400" />}
+              accentClassName="accent-black"
+            />
 
-        {/* Results Area */}
-        <section className="bg-brand-card border border-brand-border rounded-lg shadow-sm overflow-hidden">
-          <header className="flex items-center justify-between p-6 border-b border-brand-border bg-brand-bg/20">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-brand-secondary">Calculation Results</h2>
-          <div className="flex bg-brand-bg p-1 rounded-md border border-brand-border gap-1">
-              <button 
-                onClick={() => setShowInsight(!showInsight)}
-                className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded transition-all flex items-center gap-1.5 ${showInsight ? 'bg-black text-white shadow-sm' : 'text-brand-secondary hover:text-black'}`}
-              >
-                <Lightbulb size={12} />
-                Insight
-              </button>
-              <div className="w-px h-4 bg-brand-border self-center mx-1"></div>
-              <button 
+            <ParameterSlider
+              label="Discount"
+              valueLabel={`${discountPercent}%`}
+              value={discountPercent}
+              min={0}
+              max={90}
+              onChange={setDiscountPercent}
+              icon={<Percent size={16} className="text-emerald-500" />}
+              valueClassName="text-emerald-700"
+              accentClassName="accent-emerald-600"
+            />
+
+            <ParameterSlider
+              label="Tax"
+              valueLabel={`${taxPercent}%`}
+              value={taxPercent}
+              min={0}
+              max={50}
+              onChange={setTaxPercent}
+              icon={<Calculator size={16} className="text-violet-500" />}
+              valueClassName="text-violet-700"
+              accentClassName="accent-violet-600"
+            />
+          </div>
+        </SectionCard>
+
+        <SectionCard className="overflow-hidden">
+          <SectionHeader icon={<BarChart3 size={16} className="text-blue-500" />} title="Calculation Results" />
+
+          <div className="space-y-8 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+             <div className="flex flex-wrap gap-2">
+              <Button
+                variant={!showVisual ? "primary" : "secondary"}
                 onClick={() => setShowVisual(false)}
-                className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded transition-all ${!showVisual ? 'bg-black text-white shadow-sm' : 'text-brand-secondary hover:text-black'}`}
               >
-                Steps
-              </button>
-              <button 
-                onClick={() => setShowVisual(true)}
-                className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded transition-all ${showVisual ? 'bg-black text-white shadow-sm' : 'text-brand-secondary hover:text-black'}`}
-              >
-                Visual
-              </button>
-            </div>
-          </header>
+                <Calculator size={16} /> Steps
+              </Button>
 
-          <div className="p-8">
+              <Button
+                variant={showVisual ? "primary" : "secondary"}
+                onClick={() => setShowVisual(true)}
+              >
+                <BarChart3 size={16} /> Visual
+              </Button>
+            </div>
+
+              <TogglePill active={showInsight} onClick={() => setShowInsight((prev) => !prev)}>
+                {showInsight ? 'Hide Insight' : 'Show Insight'}
+              </TogglePill>
+            </div>
+
             <AnimatePresence mode="wait">
               {!showVisual ? (
-                <motion.div 
-                  key="step-by-step"
-                  initial={{ opacity: 0, y: 10 }}
+                <motion.div
+                  key="steps"
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                  exit={{ opacity: 0, y: -6 }}
+                  className="grid grid-cols-1 gap-6 md:grid-cols-2"
                 >
-                  {/* Path A */}
-                  <div className="bg-brand-bg/30 border border-brand-border p-6 rounded-lg space-y-6 hover:border-brand-green/30 transition-colors">
-                    <h3 className="text-xs font-bold uppercase tracking-widest border-b border-brand-border pb-2 flex items-center justify-between">
-                      Path A: Discount First
-                      <span className="w-2 h-2 rounded-full bg-brand-green"></span>
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="text-sm">
-                        <p className="text-brand-green text-[10px] uppercase font-bold mb-1">Step 1: Discount</p>
-                        <p className="font-mono">{formatCurrency(price)} × {discountMultiplier.toFixed(2)} = {formatCurrency(pathA_step1)}</p>
-                      </div>
-                      <div className="text-sm">
-                        <p className="text-brand-purple text-[10px] uppercase font-bold mb-1">Step 2: Tax</p>
-                        <p className="font-mono">{formatCurrency(pathA_step1)} × {taxMultiplier.toFixed(2)} = {formatCurrency(pathA_final)}</p>
-                      </div>
-                    </div>
-                    <div className="pt-4 border-t border-brand-border">
-                      <p className="text-[10px] uppercase font-bold text-brand-secondary mb-1">Final Price</p>
-                      <p className="text-2xl font-bold text-black">{formatCurrency(pathA_final)}</p>
-                    </div>
-                  </div>
+                  <ResultPathCard
+                    title="Path A: Discount then Tax"
+                    dotClassName="bg-emerald-500"
+                    stepOneLabel="Step 1: Discount"
+                    stepOneAccentClassName="text-emerald-600"
+                    stepOneEquation={`${formatCurrency(price)} × ${discountMultiplier.toFixed(2)} = ${formatCurrency(pathA_step1)}`}
+                    stepTwoLabel="Step 2: Tax"
+                    stepTwoAccentClassName="text-violet-600"
+                    stepTwoEquation={`${formatCurrency(pathA_step1)} × ${taxMultiplier.toFixed(2)} = ${formatCurrency(pathA_final)}`}
+                    finalPrice={formatCurrency(pathA_final)}
+                  />
 
-                  {/* Path B */}
-                  <div className="bg-brand-bg/30 border border-brand-border p-6 rounded-lg space-y-6 hover:border-brand-purple/30 transition-colors">
-                    <h3 className="text-xs font-bold uppercase tracking-widest border-b border-brand-border pb-2 flex items-center justify-between">
-                      Path B: Tax First
-                      <span className="w-2 h-2 rounded-full bg-brand-purple"></span>
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="text-sm">
-                        <p className="text-brand-purple text-[10px] uppercase font-bold mb-1">Step 1: Tax</p>
-                        <p className="font-mono">{formatCurrency(price)} × {taxMultiplier.toFixed(2)} = {formatCurrency(pathB_step1)}</p>
-                      </div>
-                      <div className="text-sm">
-                        <p className="text-brand-green text-[10px] uppercase font-bold mb-1">Step 2: Discount</p>
-                        <p className="font-mono">{formatCurrency(pathB_step1)} × {discountMultiplier.toFixed(2)} = {formatCurrency(pathB_final)}</p>
-                      </div>
-                    </div>
-                    <div className="pt-4 border-t border-brand-border">
-                      <p className="text-[10px] uppercase font-bold text-brand-secondary mb-1">Final Price</p>
-                      <p className="text-2xl font-bold text-black">{formatCurrency(pathB_final)}</p>
-                    </div>
-                  </div>
+                  <ResultPathCard
+                    title="Path B: Tax then Discount"
+                    dotClassName="bg-violet-500"
+                    stepOneLabel="Step 1: Tax"
+                    stepOneAccentClassName="text-violet-600"
+                    stepOneEquation={`${formatCurrency(price)} × ${taxMultiplier.toFixed(2)} = ${formatCurrency(pathB_step1)}`}
+                    stepTwoLabel="Step 2: Discount"
+                    stepTwoAccentClassName="text-emerald-600"
+                    stepTwoEquation={`${formatCurrency(pathB_step1)} × ${discountMultiplier.toFixed(2)} = ${formatCurrency(pathB_final)}`}
+                    finalPrice={formatCurrency(pathB_final)}
+                  />
                 </motion.div>
               ) : (
-                <motion.div 
+                <motion.div
                   key="visual"
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   className="space-y-8"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    <ChartWrapper title="Path A: Discount then Tax">
-                      <StackedBar 
-                        label="Start" 
-                        segments={[{ height: 100 / 1.5, color: 'bg-brand-secondary/30', tooltip: '100%' }]} 
+                  <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+                    <ChartWrapper title="Path A: Discount then Tax" price={price} formatCurrency={formatCurrency}>
+                      <StackedBar label="Start" segments={[{ height: 100 / 1.5, color: 'bg-gray-300', tooltip: '100%' }]} />
+                      <StackedBar
+                        label="Price after discount applied"
+                        segments={[{ height: (discountMultiplier * 100) / 1.5, color: 'bg-emerald-300/80', tooltip: `${(discountMultiplier * 100).toFixed(0)}%` }]}
                       />
-                      <StackedBar 
-                        label="Price after discount applied" 
-                        segments={[{ height: (discountMultiplier * 100) / 1.5, color: 'bg-brand-green/40', tooltip: `${(discountMultiplier * 100).toFixed(0)}%` }]} 
-                      />
-                      <StackedBar 
-                        label="Tax added to discount price" 
+                      <StackedBar
+                        label="Tax added to discount price"
                         segments={[
-                          { height: (discountMultiplier * 100) / 1.5, color: 'bg-brand-green/40' },
-                          { height: ((pathA_final - pathA_step1) / price * 100) / 1.5, color: 'bg-brand-purple/60', tooltip: `+${taxPercent}% Tax` }
-                        ]} 
+                          { height: (discountMultiplier * 100) / 1.5, color: 'bg-emerald-300/80' },
+                          {
+                            height: (((pathA_final - pathA_step1) / price) * 100) / 1.5,
+                            color: 'bg-violet-400/80',
+                            tooltip: `+${taxPercent}% Tax`,
+                          },
+                        ]}
                       />
-                      <StackedBar 
-                        label="Final" 
-                        segments={[{ height: (pathA_final / price * 100) / 1.5, color: 'bg-brand-blue', tooltip: formatCurrency(pathA_final) }]} 
+                      <StackedBar
+                        label="Final"
+                        segments={[{ height: ((pathA_final / price) * 100) / 1.5, color: 'bg-black', tooltip: formatCurrency(pathA_final) }]}
                       />
                     </ChartWrapper>
 
-                    <ChartWrapper title="Path B: Tax then Discount">
-                      <StackedBar 
-                        label="Start" 
-                        segments={[{ height: 100 / 1.5, color: 'bg-brand-secondary/30', tooltip: '100%' }]} 
+                    <ChartWrapper title="Path B: Tax then Discount" price={price} formatCurrency={formatCurrency}>
+                      <StackedBar label="Start" segments={[{ height: 100 / 1.5, color: 'bg-gray-300', tooltip: '100%' }]} />
+                      <StackedBar
+                        label="Price after tax applied"
+                        segments={[{ height: (taxMultiplier * 100) / 1.5, color: 'bg-violet-300/80', tooltip: `${(taxMultiplier * 100).toFixed(0)}%` }]}
                       />
-                      <StackedBar 
-                        label="Price after tax applied" 
-                        segments={[{ height: (taxMultiplier * 100) / 1.5, color: 'bg-brand-purple/40', tooltip: `${(taxMultiplier * 100).toFixed(0)}%` }]} 
-                      />
-                      <StackedBar 
-                        label="Discount subtracted from taxed price" 
+                      <StackedBar
+                        label="Discount subtracted from taxed price"
                         segments={[
-                          { height: (pathB_final / price * 100) / 1.5, color: 'bg-brand-blue/60' },
-                          { height: ((pathB_step1 - pathB_final) / price * 100) / 1.5, color: 'bg-brand-green/20 border-t border-dashed border-brand-green', tooltip: `-${discountPercent}% Disc` }
-                        ]} 
+                          { height: ((pathB_final / price) * 100) / 1.5, color: 'bg-violet-300/80' },
+                          {
+                            height: (((pathB_step1 - pathB_final) / price) * 100) / 1.5,
+                            color: 'border-t border-dashed border-emerald-500 bg-emerald-200/70',
+                            tooltip: `-${discountPercent}% Disc`,
+                          },
+                        ]}
                       />
-                      <StackedBar 
-                        label="Final" 
-                        segments={[{ height: (pathB_final / price * 100) / 1.5, color: 'bg-brand-blue', tooltip: formatCurrency(pathB_final) }]} 
+                      <StackedBar
+                        label="Final"
+                        segments={[{ height: ((pathB_final / price) * 100) / 1.5, color: 'bg-black', tooltip: formatCurrency(pathB_final) }]}
                       />
                     </ChartWrapper>
                   </div>
@@ -328,59 +239,34 @@ export default function WarehouseExplorer() {
               )}
             </AnimatePresence>
 
-            {/* Result Message */}
             <AnimatePresence>
-              {Math.abs(pathA_final - pathB_final) < 0.001 && (
-                <motion.div 
+              {Math.abs(pathA_final - pathB_final) < 0.001 ? (
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-8 text-center p-4 border border-brand-border bg-brand-bg/50 rounded text-sm font-medium text-brand-secondary"
+                  className="rounded-xl border border-black/5 bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-600"
                 >
                   The final results are mathematically identical.
                 </motion.div>
-              )}
+              ) : null}
             </AnimatePresence>
           </div>
-        </section>
+        </SectionCard>
 
-        {/* Insight Section */}
         <AnimatePresence>
-          {showInsight && (
-            <motion.section 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="bg-brand-card border border-brand-border p-8 rounded-lg shadow-md border-t-4 border-t-black space-y-6">
-                <h2 className="text-sm font-bold uppercase tracking-widest border-b border-brand-border pb-2 text-black">Mathematical Insight</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm leading-relaxed text-black">
-                  <div className="space-y-4">
-                    <p>
-                      This problem demonstrates the <strong>commutative property</strong> of multiplication. 
-                      Whether you apply a discount (multiplier &lt; 1) or tax (multiplier &gt; 1) first, the final product remains unchanged.
-                    </p>
-                  </div>
-                  <div className="bg-brand-bg p-6 rounded font-mono text-xs space-y-2 border border-brand-border">
-                    <p className="text-brand-green">Path A: P × 0.80 × 1.15</p>
-                    <p className="text-brand-purple">Path B: P × 1.15 × 0.80</p>
-                    <p className="pt-2 border-t border-brand-border font-bold text-black">A = B</p>
-                  </div>
-                </div>
-              </div>
+          {showInsight ? (
+            <motion.section initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }}>
+              <InsightCard discountMultiplier={discountMultiplier} taxMultiplier={taxMultiplier} />
             </motion.section>
-          )}
+          ) : null}
         </AnimatePresence>
-      </main>
 
-      {/* Footer */}
-      <footer className="max-w-5xl mx-auto px-6 py-12 border-t border-brand-border text-[10px] text-brand-secondary uppercase tracking-widest flex justify-between">
-        <p>© 2026 Mathematical Thinking</p>
-        <div className="flex gap-4">
-          <a href="#" className="hover:text-brand-green transition-colors">Specializing</a>
-          <a href="#" className="hover:text-brand-purple transition-colors">Generalizing</a>
-        </div>
-      </footer>
+        <footer className="pb-12 text-center">
+          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-400">
+            "Specializing helps you test examples; Generalizing helps you explain why they work."
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }

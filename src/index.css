@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+
 :root {
   --bg: #f6f7fb;
   --panel: #ffffff;
@@ -215,4 +218,8 @@ button {
   .app-content {
     padding: 16px;
   }
+}
+
+.table-header {
+  font-family: "IBM Plex Sans", sans-serif;
 }
