@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CircleDollarSign, Layers, ArrowLeft, Orbit, LineSquiggle, SquaresIntersect, Flame, ListCheck, Rabbit, Users, Divide, ChessQueen, Diameter, Waves} from 'lucide-react';
+import { CircleDollarSign, Layers, ArrowLeft, Orbit, LineSquiggle, SquaresIntersect, Flame, ListCheck, Rabbit, Users, Divide, ChessQueen, Diameter, Waves, Grid2X2} from 'lucide-react';
 import LeapfrogsExplorer from './apps/LeapfrogsExplorer';
 import { AnimatePresence, motion } from 'motion/react';
 import DifferenceOfSquaresExplorer from './apps/DifferenceOfSquaresExplorer';
@@ -14,6 +14,7 @@ import GreatDivideExplorer from './apps/GreatDivideExplorer';
 import CirclesAndSpotsExplorer from './apps/CirclesAndSpotsExplorer';
 import EurekaExplorer from './apps/EurekaExplorer';
 import RiverCrossingExplorer from './apps/RiverCrossingExplorer';
+import MatchesExplorer from './apps/MatchesExplorer';
 
 type RouteKey =
   | 'home'
@@ -29,7 +30,8 @@ type RouteKey =
   | 'great-divide'
   | 'circles-and-spots'
   | 'eureka'
-  | 'river-crossing';
+  | 'river-crossing'
+    'matches';
 
 const apps = [
   {
@@ -117,7 +119,12 @@ const apps = [
   icon: Waves,
 },
 
-
+{
+  key: 'matches' as const,
+  title: 'Matches Explorer',
+  description: 'How many matches will there be?',
+  icon: Grid2X2,
+},
 
 ];
 
@@ -137,8 +144,8 @@ function getRouteFromHash(): RouteKey {
     hash === 'great-divide' ||
     hash === 'circles-and-spots' ||
     hash === 'eureka' ||
-    hash === 'river-crossing'
-  ) {
+    hash === 'river-crossing' ||
+    hash === 'matches' ) {
     return hash;
   }
 
@@ -443,6 +450,28 @@ export default function App() {
             Home
           </button>
           <RiverCrossingExplorer/>
+        </motion.div>
+      );
+    }
+
+    if (route === 'matches') {
+      return (
+        <motion.div
+          key="matches"
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+          className="fixed inset-0 z-50 overflow-y-auto bg-gray-50"
+        >
+          <button
+            onClick={() => navigate('home')}
+            className="sticky left-4 top-4 z-[60] ml-4 mt-4 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/95 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur hover:bg-gray-50"
+          >
+            <ArrowLeft size={16} />
+            Home
+          </button>
+          <MatchesExplorer/>
         </motion.div>
       );
     }
