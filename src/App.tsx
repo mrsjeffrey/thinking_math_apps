@@ -12,7 +12,7 @@ import PalindromesExplorer from './apps/PalindromesExplorer';
 import LadiesLuncheonExplorer from './apps/LadiesLuncheonExplorer';
 import GreatDivideExplorer from './apps/GreatDivideExplorer';
 import CirclesAndSpotsExplorer from './apps/CirclesAndSpotsExplorer';
-import EurekaExplorer from './apps/CirclesAndSpotsExplorer';
+import EurekaExplorer from './apps/EurekaExplorer';
 
 type RouteKey =
   | 'home'
