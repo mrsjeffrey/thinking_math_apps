@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Sigma, Layers, ArrowLeft, Orbit, Compass, Binary, Flame, ScanText, BookOpen, Rabbit, Users, Divide } from 'lucide-react';
+import { Sigma, Layers, ArrowLeft, Orbit, Compass, Binary, Flame, ScanText, BookOpen, Rabbit, Users, Divide, ChessQueen, Diameter } from 'lucide-react';
 import LeapfrogsExplorer from './apps/LeapfrogsExplorer';
 import { AnimatePresence, motion } from 'motion/react';
 import DifferenceOfSquaresExplorer from './apps/DifferenceOfSquaresExplorer';
@@ -98,14 +98,14 @@ const apps = [
   key: 'circles-and-spots' as const,
   title: 'Circles and Spots Explorer',
   description: 'Connect spots to create the maximum number of regions.',
-  icon: Divide,
+  icon: Diameter,
 },
 
 {
   key: 'eureka' as const,
   title: 'Eureka Explorer',
   description: 'Can you determine the sequence rule?',
-  icon: Divide,
+  icon: ChessQueen,
 },
 
 
