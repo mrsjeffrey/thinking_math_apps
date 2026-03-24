@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Sigma, Layers, ArrowLeft, Orbit, Compass, Binary, Flame, ScanText, BookOpen, Rabbit, Users, Divide, ChessQueen, Diameter } from 'lucide-react';
+import { CircleDollarSign, Layers, ArrowLeft, Orbit, LineSquiggle, SquaresIntersect, Flame, ListCheck, Rabbit, Users, Divide, ChessQueen, Diameter, Waves} from 'lucide-react';
 import LeapfrogsExplorer from './apps/LeapfrogsExplorer';
 import { AnimatePresence, motion } from 'motion/react';
 import DifferenceOfSquaresExplorer from './apps/DifferenceOfSquaresExplorer';
@@ -13,6 +13,7 @@ import LadiesLuncheonExplorer from './apps/LadiesLuncheonExplorer';
 import GreatDivideExplorer from './apps/GreatDivideExplorer';
 import CirclesAndSpotsExplorer from './apps/CirclesAndSpotsExplorer';
 import EurekaExplorer from './apps/EurekaExplorer';
+import RiverCrossingExplorer from './apps/RiverCrossingExplorer';
 
 type RouteKey =
   | 'home'
@@ -27,38 +28,39 @@ type RouteKey =
   | 'ladiesluncheon'
   | 'great-divide'
   | 'circles-and-spots'
-  | 'eureka';
+  | 'eureka'
+  | 'river-crossing';
 
 const apps = [
   {
     key: 'paper-folding' as const,
     title: 'Paper Folding Explorer',
-    description: 'Explore folds, doubling, creases, and pattern growth.',
+    description: 'What patterns emerge as you fold again and again?',
     icon: Layers,
   },
   {
     key: 'warehouse' as const,
     title: 'Warehouse Problem Explorer',
     description: 'Compare discount-first and tax-first visually and numerically.',
-    icon: Sigma,
+    icon: CircleDollarSign,
   },
   {
     key: 'threaded-pins' as const,
     title: 'Threaded Pins Explorer',
-    description: 'Explore loops, gaps, and why gcd appears in circular patterns.',
+    description: 'Explore loops, gaps, and circular patterns.',
     icon: Orbit,
   },
   {
     key: 'tethered-goat' as const,
     title: 'Tethered Goat Explorer',
-    description: 'Investigate grazing area around a rectangular shed.',
-    icon: Compass,
+    description: 'How much field space can the goat graze?',
+    icon: LineSquiggle,
   },
   {
     key: 'difference-of-squares' as const,
     title: 'Difference of Squares Explorer',
-    description: 'Test which numbers can be written as x² − y² and find the pattern.',
-    icon: Binary,
+    description: 'Which numbers can be built from two squares, and which cannot?',
+    icon: SquaresIntersect,
   },
   {
   key: 'quick-and-toasty' as const,
@@ -69,14 +71,14 @@ const apps = [
   {
   key: 'palindromes' as const,
   title: 'Palindromes Explorer',
-  description: 'Test and prove why every 4-digit palindrome is divisible by 11.',
-  icon: ScanText,
+  description: 'Is every 4-digit palindrome divisible by 11?',
+  icon: ListCheck,
 },
 
 {
   key: 'leapfrogs' as const,
   title: 'Leapfrogs Explorer',
-  description: 'Swap two groups of frogs and investigate the minimum move pattern.',
+  description: 'How can two sets of pegs trade places using the fewest moves possible?',
   icon: Rabbit,
 },
 
@@ -90,23 +92,31 @@ const apps = [
 {
   key: 'great-divide' as const,
   title: 'The Great Divide Explorer',
-  description: 'Use remainders, LCM, and structure to find the smallest solution.',
+  description: 'A numerical riddle: Exploring remainders and divisibility.',
   icon: Divide,
 },
 
 {
   key: 'circles-and-spots' as const,
   title: 'Circles and Spots Explorer',
-  description: 'Connect spots to create the maximum number of regions.',
+  description: 'How many regions can you make?',
   icon: Diameter,
 },
 
 {
   key: 'eureka' as const,
   title: 'Eureka Explorer',
-  description: 'Can you determine the sequence rule?',
+  description: 'Can you uncover the secret sequence rule?',
   icon: ChessQueen,
 },
+
+{
+  key: 'river-crossing' as const,
+  title: 'River Crossing Explorer',
+  description: 'Is it possible for everyone to cross the river?',
+  icon: Waves,
+},
+
 
 
 ];
@@ -126,7 +136,8 @@ function getRouteFromHash(): RouteKey {
     hash === "ladiesluncheon" ||
     hash === 'great-divide' ||
     hash === 'circles-and-spots' ||
-    hash === 'eureka'
+    hash === 'eureka' ||
+    hash === 'river-crossing'
   ) {
     return hash;
   }
@@ -392,7 +403,7 @@ export default function App() {
       );
     }
 
-        if (route === 'eureka') {
+    if (route === 'eureka') {
       return (
         <motion.div
           key="eureka"
@@ -410,6 +421,28 @@ export default function App() {
             Home
           </button>
           <EurekaExplorer/>
+        </motion.div>
+      );
+    }
+
+    if (route === 'river-crossing') {
+      return (
+        <motion.div
+          key="river-crossing"
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+          className="fixed inset-0 z-50 overflow-y-auto bg-gray-50"
+        >
+          <button
+            onClick={() => navigate('home')}
+            className="sticky left-4 top-4 z-[60] ml-4 mt-4 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/95 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur hover:bg-gray-50"
+          >
+            <ArrowLeft size={16} />
+            Home
+          </button>
+          <RiverCrossingExplorer/>
         </motion.div>
       );
     }
