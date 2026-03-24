@@ -12,6 +12,7 @@ import PalindromesExplorer from './apps/PalindromesExplorer';
 import LadiesLuncheonExplorer from './apps/LadiesLuncheonExplorer';
 import GreatDivideExplorer from './apps/GreatDivideExplorer';
 import CirclesAndSpotsExplorer from './apps/CirclesAndSpotsExplorer';
+import EurekaExplorer from './apps/CirclesAndSpotsExplorer';
 
 type RouteKey =
   | 'home'
@@ -25,7 +26,8 @@ type RouteKey =
   | 'leapfrogs'
   | 'ladiesluncheon'
   | 'great-divide'
-  | 'circles-and-spots';
+  | 'circles-and-spots'
+  | 'eureka';
 
 const apps = [
   {
@@ -99,6 +101,12 @@ const apps = [
   icon: Divide,
 },
 
+{
+  key: 'eureka' as const,
+  title: 'Eureka Explorer',
+  description: 'Can you determine the sequence rule?',
+  icon: Divide,
+},
 
 
 ];
@@ -117,7 +125,8 @@ function getRouteFromHash(): RouteKey {
     hash === "leapfrogs" ||
     hash === "ladiesluncheon" ||
     hash === 'great-divide' ||
-    hash === 'circles-and-spots'
+    hash === 'circles-and-spots' ||
+    hash === 'eureka'
   ) {
     return hash;
   }
@@ -379,6 +388,28 @@ export default function App() {
             Home
           </button>
           <CirclesAndSpotsExplorer/>
+        </motion.div>
+      );
+    }
+
+        if (route === 'eureka') {
+      return (
+        <motion.div
+          key="eureka"
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+          className="fixed inset-0 z-50 overflow-y-auto bg-gray-50"
+        >
+          <button
+            onClick={() => navigate('home')}
+            className="sticky left-4 top-4 z-[60] ml-4 mt-4 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/95 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur hover:bg-gray-50"
+          >
+            <ArrowLeft size={16} />
+            Home
+          </button>
+          <EurekaExplorer/>
         </motion.div>
       );
     }
